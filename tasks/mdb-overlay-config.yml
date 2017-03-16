@@ -1,0 +1,19 @@
+---
+- name: Configure {{ item.key }} overlay
+  command: /usr/local/bin/slapd-overlay-attribute-upsert "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={2}mdb,cn=config" "{{ item.key }}" "{{ attr.key }}" "{{ attr.value }}"
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  with_dict: "{{ item.value }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"
+  loop_control:
+    loop_var: attr
+
+- name: Clean unknown attributes in {{ item.key }} overlay
+  command: /usr/local/bin/slapd-overlay-olc-attribute-clean "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={2}mdb,cn=config" "{{ item.key }}" {{ item.value | join(' ') }}
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"
+  loop_control:
+    loop_var: attr

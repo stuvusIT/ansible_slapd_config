@@ -1,0 +1,28 @@
+#!/bin/bash -e
+
+# This script is supposed to load schemas from files.
+
+set -o nounset
+umask 177
+
+# Parameters
+socket="ldapi://${1}"
+binddn="${2}"
+# bindpw via env variable
+schemafile="${3}"
+olcDir="${4}"
+
+# See how it currently looks
+schemaname="$(basename "${schemafile}" '.schema')"
+while IFS='' read currentFile; do
+	if [[ "$(basename "${currentFile}")" =~ ^cn=\{[[:digit:]]*\}"${schemaname}".ldif$ ]]; then
+		exit 0
+	fi
+done < <(find "${olcDir}/cn=config/cn=schema" -maxdepth 1 -type f)
+
+# Insert schema
+schema2ldif "${schemafile}" > /dev/shm/addschema.ldif
+builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addschema.ldif
+rm -f /dev/shm/addschema.ldif
+echo "CHANGED"
+

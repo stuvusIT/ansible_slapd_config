@@ -1,0 +1,34 @@
+#!/bin/bash -e
+
+# This script is supposed to create an overlay if it doesn't exist yet.
+
+set -o nounset
+umask 177
+
+# Parameters
+socket="ldapi://${1}"
+binddn="${2}"
+# bindpw via env variable
+database="${3}"
+overlayName="${4}"
+class="${5}"
+
+# Figure out if it is already added
+set +e
+search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${database}" -s sub "dn")"
+set -e
+
+# Is is already there?
+while IFS='' read line; do
+	[[ "${line}" =~ ^dn:\ olcOverlay=\{[[:digit:]]*\}"${overlayName}","${database}"$ ]] && exit 0
+done < <(echo "${search}")
+
+# Nope, create it
+cat << EOF >/dev/shm/addoverlay.ldif
+dn: olcOverlay=${overlayName},${database}
+objectClass: ${class}
+olcOverlay: ${overlayName}
+EOF
+builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addoverlay.ldif
+rm -f /dev/shm/addoverlay.ldif
+echo "CHANGED"
