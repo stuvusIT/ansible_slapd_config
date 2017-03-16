@@ -1,0 +1,95 @@
+#!/bin/bash -e
+
+# This script loads the mdb and monitor module if required.
+# It can also load other modules by specifying paramter 5 and following.
+
+set -o nounset
+umask 177
+
+# Parameters
+socket="ldapi://${1}"
+binddn="${2}"
+# bindpw via env variable
+modulePath="${3}"
+monitor="${4}"
+shift 4
+
+# Figure out which modules we need
+set +e
+staticModules="$(slapd -VVV 2>&1)"
+set -e
+neededModules=('mdb')
+[ "${monitor}" = 'True' ] && neededModules+=('monitor')
+for param in "${@}"; do
+	neededModules+=("${param}")
+done
+for mod in "${neededModules[@]}"; do
+	[[ "${staticModules}" == *"${mod}"* ]] && neededModules=("${neededModules[@]/${mod}}")
+done
+shouldexit=1
+for mod in "${neededModules[@]}"; do
+	if [ ! -z "${mod}" ]; then
+		shouldexit=0
+		break
+	fi
+done
+[ "${shouldexit}" = 1 ] && exit 0
+
+# Check if modules entry is already created
+set +e
+alreadyThere="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b 'cn=modules{0},cn=config' -s base olcModuleLoad)"
+searchresult="${?}"
+set -e
+if [[ ! "${searchresult}" -eq 0 && ! "${searchresult}" -eq 32 ]]; then
+	exit "${searchresult}"
+fi
+
+# Create modules entry if needed
+if [ "${searchresult}" -eq 32 ]; then
+	cat << EOF > /dev/shm/addmods.ldif
+dn: cn=modules{0},cn=config
+objectClass: olcModuleList
+cn: modules{0}
+olcModulePath: ${modulePath}
+EOF
+	for mod in "${neededModules[@]}"; do
+		[ -z "$(echo "${mod}" | xargs)" ] && continue
+		echo "olcModuleLoad: ${mod}.so" >> /dev/shm/addmods.ldif
+	done
+	builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addmods.ldif
+	rm -f /dev/shm/addmods.ldif
+	echo CHANGED
+	exit 0
+fi
+
+while IFS='' read line; do
+	for mod in "${neededModules[@]}"; do
+		if [[ "${line}" =~ ^olcModuleLoad:\ \{[[:digit:]]*\}"${mod}".so$ ]]; then
+			neededModules=("${neededModules[@]/${mod}}")
+			break
+		fi
+	done
+done < <(echo "${alreadyThere}" | grep '^olcModuleLoad')
+
+shouldexit=1
+for mod in "${neededModules[@]}"; do
+	if [ ! -z "${mod}" ]; then
+		shouldexit=0
+		break
+	fi
+done
+[ "${shouldexit}" = 1 ] && exit 0
+
+# Add required modules
+cat << EOF > /dev/shm/addvals.ldif
+dn: cn=modules{0},cn=config
+changetype: modify
+add: olcModuleLoad
+EOF
+for mod in "${neededModules[@]}"; do
+	[ -z "$(echo "${mod}" | xargs)" ] && continue
+	echo "olcModuleLoad: ${mod}.so" >> /dev/shm/addvals.ldif
+done
+builtin echo -n "${bindpw}" | ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addvals.ldif
+rm -f /dev/shm/addvals.ldif
+echo "CHANGED"

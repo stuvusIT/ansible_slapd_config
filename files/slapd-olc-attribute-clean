@@ -1,0 +1,51 @@
+#!/bin/bash -e
+
+# This script deletes all unknown attributes beginning with "olc...".
+# Known attributes are supplied as arguments beginning with argument #4.
+
+set -o nounset
+umask 177
+
+# Parameters
+socket="ldapi://${1}"
+binddn="${2}"
+# bindpw via env variable
+dn="${3}"
+shift 3
+
+# Fetch current attributes
+set +e
+search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${dn}" -s base | grep "^olc")"
+set -e
+
+# See what we should delete
+todel=''
+while IFS='' read line; do
+	delthis=1
+	for param in "${@}"; do
+		if [[ "${line}" =~ ^"${param}":\ .* ]]; then
+			delthis=0
+			break
+		fi
+	done
+	if [ "${delthis}" = 1 ]; then
+		todel="${todel}
+delete: $(echo "${line}" | cut -d':' -f1)"
+	fi
+done <<< "${search}"
+
+# Anything to do?
+if [ -z "$(echo "${todel}" | xargs)" ]; then
+	exit 0
+fi
+
+# Clean attributes
+cat << EOF > /dev/shm/clearattrs.ldif
+dn: ${dn}
+changetype: modify
+EOF
+echo "${todel}" >> /dev/shm/clearattrs.ldif
+builtin echo -n "${bindpw}" | ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/clearattrs.ldif
+rm -f /dev/shm/clearattrs.ldif
+echo "CHANGED"
+

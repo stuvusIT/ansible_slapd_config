@@ -1,0 +1,22 @@
+---
+- name: Hash MDB password
+  command: "/bin/bash -c '/usr/sbin/slappasswd -n -T /dev/stdin < <(echo -n $password)'"
+  environment:
+    password: "{{ mdb_rootdn_password | mandatory }}"
+  register: hashedMdbPassword
+  changed_when: false
+
+- name: Apply MDB configuration
+  command: /usr/local/bin/slapd-attribute-upsert "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={2}mdb,cn=config" {{ item.key }} {% if item.value is iterable and item.value is not string %}{{ item.value | join(' ') }}{% else %}"{{ item.value }}"{% endif %}
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"
+  with_dict: "{{ default_mdb_config | combine(mdb_config) }}"
+
+- name: Clean unknown MDB config items
+  command: /usr/local/bin/slapd-olc-attribute-clean "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={2}mdb,cn=config" {{ default_mdb_config | combine(mdb_config) | join(' ') }}
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"

@@ -1,0 +1,40 @@
+---
+- name: Copy helper scripts
+  copy:
+    src: "{{ item }}"
+    dest: /usr/local/bin/{{ item }}
+    owner: root
+    group: root
+    mode: 0700
+  with_items:
+    - slapd-attribute-upsert
+    - slapd-create-monitor
+    - slapd-create-overlay
+    - slapd-olc-attribute-clean
+    - slapd-global-modules
+    - slapd-global-schema
+    - slapd-overlay-attribute-upsert
+    - slapd-overlay-dn
+    - slapd-overlay-olc-attribute-clean
+
+# Global
+- include: global-schemas.yml
+- include: global-config.yml
+- include: global-modules.yml
+# Frontend
+- include: frontend-config.yml
+# OLC
+- include: olc-config.yml
+# Monitor
+- include: monitor-create.yml
+  when: enable_monitor
+- include: monitor-config.yml
+  when: enable_monitor
+# MDB
+- include: mdb-create.yml
+- include: mdb-overlay-create.yml
+  when: "mdb_overlays is not undefined"
+- include: mdb-overlay-config.yml
+  with_dict: "{{ mdb_overlays }}"
+  when: "mdb_overlays is not undefined"
+- include: mdb-config.yml

@@ -1,0 +1,32 @@
+#!/bin/bash -e
+
+# This script is should get the DN of a given overlay of a given database.
+
+set -o nounset
+umask 177
+
+# Parameters
+socket="ldapi://${1}"
+binddn="${2}"
+# bindpw via env variable
+db="${3}"
+overlay="${4}"
+
+# Search for the overlay
+set +e
+search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${db}" -s sub dn)"
+set -e
+
+if [ -z "$(echo "${search}" | xargs)" ]; then
+	echo "Overlay not found"
+	exit 1
+fi
+
+while IFS='' read line; do
+	if [[ "${line}" =~ ^dn:\ olcOverlay=\{[[:digit:]]*\}"${overlay}","${db}"$ ]]; then
+		echo "$(echo "${line}" | cut -d' ' -f2-)"
+		exit 0
+	fi
+done < <(echo "${search}")
+echo "Overlay not found"
+exit 1

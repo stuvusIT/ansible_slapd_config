@@ -1,0 +1,78 @@
+#!/bin/bash -e
+
+# This script is able to insert attributes or replace them if they already exist.
+# Operations will only be performed when the state is not already as desired.
+# Arrays are supported, just give more parameters beginning with parameter #5.
+# If only 4 parameters are specified, the attribute is removed.
+
+set -o nounset
+umask 177
+
+# Parameters
+socket="ldapi://${1}"
+binddn="${2}"
+# bindpw via env variable
+dn="${3}"
+attribute="${4}"
+shift 4
+[ "${attribute}" = 'dummy' ] && exit 0
+
+# See how it currently looks
+set +e
+search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${dn}" -s base "${attribute}" | grep "^${attribute}:")"
+set -e
+
+# Decide what to do
+if [ -z "$(echo "${search}" | xargs)" ]; then
+	# Does it even need to be created?
+	if [ "${#}" = 0 ]; then
+		exit 0
+	fi
+	if [ "${1}" = '' ]; then
+		exit 0
+	fi
+	# Create new attribute
+	operation='add'
+elif [ "${#}" = 0 ]; then
+	# Delete existing attribute
+	operation='delete'
+elif [ "${1}" = "" ]; then
+	# Delete existing attribute
+	operation='delete'
+else
+	# Replace existing attribute
+	operation='replace'
+	# Check if everything is already as desired
+	for param in "${@}"; do
+		needReplace=0
+		while IFS='' read searchline; do
+			if [[ ! "${searchline}" =~ ^"${attribute}":\ (\{[[:digit:]]*\})?"${param}"$ ]]; then
+				needReplace=1
+				break
+			fi
+		done <<< "${search}"
+		if [ "${needReplace}" = 1 ]; then
+			break
+		fi
+	done
+	# Nothing to be done
+	if [ "${needReplace}" = 0 ]; then
+		exit 0
+	fi
+fi
+
+# Perform the actual modification
+cat << EOF > /dev/shm/modattrs.ldif
+dn: ${dn}
+changetype: modify
+${operation}: ${attribute}
+EOF
+# Body
+if [ "${operation}" != 'delete' ]; then
+	for param in "${@}"; do
+		echo "${attribute}: ${param}" >> /dev/shm/modattrs.ldif
+	done
+fi
+builtin echo -n "${bindpw}" | ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/modattrs.ldif
+rm -f /dev/shm/modattrs.ldif
+echo "CHANGED"

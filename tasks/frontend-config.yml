@@ -1,0 +1,15 @@
+---
+- name: Apply frontend configuration
+  command: /usr/local/bin/slapd-attribute-upsert "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={-1}frontend,cn=config" {{ item.key }} {% if item.value is iterable and item.value is not string %}{{ item.value | join(' ') }}{% else %}"{{ item.value }}"{% endif %}
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"
+  with_dict: "{{ frontend_config }}"
+
+- name: Clean unknown frontend config items
+  command: /usr/local/bin/slapd-olc-attribute-clean "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={-1}frontend,cn=config" {{ frontend_config | join(' ') }} olcAttributeOptions olcConcurrency olcTLSCRLCheck olcTLSVerifyClient olcTLSProtocolMin
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"

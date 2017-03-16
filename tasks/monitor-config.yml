@@ -1,0 +1,22 @@
+---
+- name: Hash monitor password
+  command: "/bin/bash -c '/usr/sbin/slappasswd -n -T /dev/stdin < <(echo -n $password)'"
+  environment:
+    password: "{{ monitor_rootdn_password | mandatory }}"
+  register: hashedMonitorPassword
+  changed_when: false
+
+- name: Apply monitor configuration
+  command: /usr/local/bin/slapd-attribute-upsert "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={1}monitor,cn=config" {{ item.key }} {% if item.value is iterable and item.value is not string %}{{ item.value | join(' ') }}{% else %}"{{ item.value }}"{% endif %}
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"
+  with_dict: "{{ default_monitor_config | combine(monitor_config) }}"
+
+- name: Clean unknown monitor config items
+  command: /usr/local/bin/slapd-olc-attribute-clean "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={1}monitor,cn=config" {{ default_monitor_config | combine(monitor_config) | join(' ') }}
+  environment:
+    bindpw: "{{ olc_rootdn_password | mandatory }}"
+  register: out
+  changed_when: "'CHANGED' in out.stdout | default('')"
