@@ -46,6 +46,7 @@ cat << EOF > /dev/shm/clearattrs.ldif
 dn: ${dn}
 changetype: modify
 EOF
+
 echo "${todel}" >> /dev/shm/clearattrs.ldif
 builtin echo -n "${bindpw}" | \
 	ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/clearattrs.ldif
