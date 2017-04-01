@@ -17,7 +17,9 @@ shift 4
 
 # Fetch current attributes
 set +e
-search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${dn}" -s base | grep "^olc")"
+search="$(builtin echo -n "${bindpw}" | \
+	ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${dn}" -s base | \
+	grep "^olc")"
 set -e
 
 # See what we should delete
@@ -47,7 +49,8 @@ dn: ${dn}
 changetype: modify
 EOF
 echo "${todel}" >> /dev/shm/clearattrs.ldif
-builtin echo -n "${bindpw}" | ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/clearattrs.ldif
+builtin echo -n "${bindpw}" | \
+	ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/clearattrs.ldif
 rm -f /dev/shm/clearattrs.ldif
 echo "CHANGED"
 

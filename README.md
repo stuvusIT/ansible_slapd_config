@@ -267,7 +267,7 @@ The MDB database also has some more attributes which are only supported on this 
 
 ## Dependencies
 
-This role depends on `slapd-base` or any other role creating the OLC and exporting the same variables.
+This role depends on [`slapd-base`](https://github.com/stuvusIT/slapd-base) or any other role creating the OLC and exporting the same variables.
 Also, `schema2ldif` should be installed.
 
 ## Example Playbook

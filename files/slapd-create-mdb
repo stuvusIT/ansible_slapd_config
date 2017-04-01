@@ -14,7 +14,8 @@ dbDir="${4}"
 
 # See how it currently looks
 set +e
-builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "olcDatabase={2}mdb,cn=config" -s base "dn"
+builtin echo -n "${bindpw}" | \
+	ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "olcDatabase={2}mdb,cn=config" -s base "dn"
 status="${?}"
 set -e
 
@@ -31,6 +32,7 @@ olcDatabase: {2}mdb
 olcSuffix: ${suffix}
 olcDbDirectory: ${dbDir}
 EOF
-builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addmdb.ldif
+builtin echo -n "${bindpw}" | \
+	ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addmdb.ldif
 rm -f /dev/shm/addmdb.ldif
 echo "CHANGED"
