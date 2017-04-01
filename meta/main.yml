@@ -14,7 +14,7 @@ galaxy_info:
     - yakkety
   - name: Debian
     versions:
-    - wheezy
+    - jessie
   - name: ArchLinux
     versions:
     - all
