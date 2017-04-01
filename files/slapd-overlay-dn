@@ -14,7 +14,8 @@ overlay="${4}"
 
 # Search for the overlay
 set +e
-search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${db}" -s sub dn)"
+search="$(builtin echo -n "${bindpw}" | \
+	ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${db}" -s sub dn)"
 set -e
 
 if [ -z "$(echo "${search}" | xargs)" ]; then

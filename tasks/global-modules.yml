@@ -1,6 +1,9 @@
 ---
 - name: Load global modules
-  command: /usr/local/bin/slapd-global-modules "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "{{ modules_path }}" "{{ enable_monitor }}" {% if additional_modules is not undefined %}{{ additional_modules | join(' ') }}{% endif %}
+  command: >
+    /usr/local/bin/slapd-global-modules "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}"
+    "{{ modules_path }}" "{{ enable_monitor }}"
+    {% if additional_modules is not undefined %}{{ additional_modules | join(' ') }}{% endif %}
   environment:
     bindpw: "{{ olc_rootdn_password | mandatory }}"
   register: out

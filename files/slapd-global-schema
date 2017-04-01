@@ -22,7 +22,8 @@ done < <(find "${olcDir}/cn=config/cn=schema" -maxdepth 1 -type f)
 
 # Insert schema
 schema2ldif "${schemafile}" > /dev/shm/addschema.ldif
-builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addschema.ldif
+builtin echo -n "${bindpw}" | \
+	ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addschema.ldif
 rm -f /dev/shm/addschema.ldif
 echo "CHANGED"
 

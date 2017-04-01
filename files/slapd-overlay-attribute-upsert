@@ -22,7 +22,9 @@ shift 5
 
 # See how it currently looks
 set +e
-search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${dn}" -s base "${attribute}" | grep "^${attribute}:")"
+search="$(builtin echo -n "${bindpw}" | \
+	ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${dn}" -s base "${attribute}" | \
+	grep "^${attribute}:")"
 set -e
 
 # Decide what to do
@@ -76,6 +78,7 @@ if [ "${operation}" != 'delete' ]; then
 		echo "${attribute}: ${param}" >> /dev/shm/modattrs.ldif
 	done
 fi
-builtin echo -n "${bindpw}" | ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/modattrs.ldif
+builtin echo -n "${bindpw}" | \
+	ldapmodify -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/modattrs.ldif
 rm -f /dev/shm/modattrs.ldif
 echo "CHANGED"

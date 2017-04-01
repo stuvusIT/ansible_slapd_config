@@ -15,7 +15,8 @@ class="${5}"
 
 # Figure out if it is already added
 set +e
-search="$(builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${database}" -s sub "dn")"
+search="$(builtin echo -n "${bindpw}" | \
+	ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "${database}" -s sub "dn")"
 set -e
 
 # Is is already there?
@@ -29,6 +30,7 @@ dn: olcOverlay=${overlayName},${database}
 objectClass: ${class}
 olcOverlay: ${overlayName}
 EOF
-builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addoverlay.ldif
+builtin echo -n "${bindpw}" | \
+	ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addoverlay.ldif
 rm -f /dev/shm/addoverlay.ldif
 echo "CHANGED"

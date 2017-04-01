@@ -12,7 +12,8 @@ binddn="${2}"
 
 # See how it currently looks
 set +e
-builtin echo -n "${bindpw}" | ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "olcDatabase={1}monitor,cn=config" -s base "dn"
+builtin echo -n "${bindpw}" | \
+	ldapsearch -o ldif-wrap=no -H "${socket}" -D "${binddn}" -y /dev/stdin -b "olcDatabase={1}monitor,cn=config" -s base "dn"
 status="${?}"
 set -e
 
@@ -27,6 +28,7 @@ dn: olcDatabase={1}monitor,cn=config
 objectClass: olcMonitorConfig
 olcDatabase: {1}monitor
 EOF
-builtin echo -n "${bindpw}" | ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addmon.ldif
+builtin echo -n "${bindpw}" | \
+	ldapadd -H "${socket}" -D "${binddn}" -y /dev/stdin -f /dev/shm/addmon.ldif
 rm -f /dev/shm/addmon.ldif
 echo "CHANGED"

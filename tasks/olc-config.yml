@@ -7,7 +7,10 @@
   changed_when: false
 
 - name: Apply OLC configuration
-  command: /usr/local/bin/slapd-attribute-upsert "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={0}config,cn=config" {{ item.key }} {% if item.value is iterable and item.value is not string %}{{ item.value | join(' ') }}{% else %}"{{ item.value }}"{% endif %}
+  command: >
+    /usr/local/bin/slapd-attribute-upsert "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}"
+    "olcDatabase={0}config,cn=config"
+    {{ item.key }} {% if item.value is iterable and item.value is not string %}{{ item.value | join(' ') }}{% else %}"{{ item.value }}"{% endif %}
   environment:
     bindpw: "{{ olc_rootdn_password | mandatory }}"
   register: out
@@ -15,7 +18,10 @@
   with_dict: "{{ default_olc_config | combine(olc_config) }}"
 
 - name: Clean unknown OLC config items
-  command: /usr/local/bin/slapd-olc-attribute-clean "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}" "olcDatabase={0}config,cn=config" {{ default_olc_config | combine(olc_config) | join(' ') }}
+  command: >
+    /usr/local/bin/slapd-olc-attribute-clean "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}"
+    "olcDatabase={0}config,cn=config"
+    {{ default_olc_config | combine(olc_config) | join(' ') }}
   environment:
     bindpw: "{{ olc_rootdn_password | mandatory }}"
   register: out
