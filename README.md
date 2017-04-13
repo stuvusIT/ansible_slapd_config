@@ -16,7 +16,6 @@ A dpkg- or pacman-based Linux distribution.
 
 **All variables must be quoted when they contain spaces!**"
 
-This role requires the variables that are exported by `slapd-base`, so run it first or check out the variables to set there.
 There are some role-global variables:
 
 | Name                            | Required                 | Default         | Description                                                                     |
