@@ -2,7 +2,7 @@
 
 This role allows configuring the entire OLC of an OpenLDAP server.
 It requires you to have already created an OLC and have slapd running.
-Check out the `slapd-base` for this purpose.
+Check out the [slapd-base](https://github.com/stuvusIT/slapd-base) for this purpose.
 
 slapd-config will create the global slapd configuration directly in `cn=config`, and load global modules like mdb if they are not compiled as static backends.
 Afterwards, the monitoring backend and an MDB are created and configured.
@@ -280,8 +280,7 @@ The MDB database also has some more attributes which are only supported on this 
 
 ## Dependencies
 
-This role depends on [`slapd-base`](https://github.com/stuvusIT/slapd-base) or any other role creating the OLC and exporting the same variables.
-Also, `schema2ldif` should be installed.
+`schema2ldif` must be installed.
 
 ## Example Playbook
 
