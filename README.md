@@ -293,9 +293,9 @@ The MDB database also has some more attributes which are only supported on this 
     slapd_mdb_rootdn_password: water
     slapd_monitor_rootdn_password: water
     slapd_additional_modules: [ 'memberof' ]
-    mdb_config:
+    slapd_mdb_config:
       olcSuffix: "dc=example,dc=com"
-    slpd_mdb_overlays:
+    slapd_mdb_overlays:
       memberof:
         olcOverlay: memberof
         objectClass: olcMemberOf
