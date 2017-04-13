@@ -1,6 +1,6 @@
 galaxy_info:
   author: Janne Heß
-  description: Configure an entire slapd with the OLC and Ansible
+  description: Configure an entire slapd with the OLC
   company: stuvus (http://stuvus.uni-stuttgart.de)
 
   license: CC-BY-SA
