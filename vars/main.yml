@@ -1,0 +1,87 @@
+---
+# slapd global configuration
+default_global_config:
+  # General configuration
+  olcConfigDir: "{{ slapd_olc_dir | mandatory }}"
+  olcArgsFile: "{{ slapd_run_dir | mandatory }}/slapd.args"
+  olcPidFile: "{{ slapd_run_dir | mandatory }}/slapd.pid"
+  olcGentleHUP: "FALSE"
+  olcServerID: 0
+  # Security-related configuration
+  olcRequires: "bind"
+  olcSecurity: "ssf=1 simple_bind=128"
+  olcAuthzPolicy: "none"
+  olcLocalSSF: 300
+  olcPasswordHash: "{SSHA}"
+  olcPasswordCryptSaltFormat: "%s"
+  # Logging
+  olcLogLevel: "stats"
+  # Threading
+  olcListenerThreads: 1
+  olcThreads: 16
+  olcToolThreads: 1
+  # Timeouts and limits
+  olcIdleTimeout: 0
+  olcWriteTimeout: 0
+  olcTimeLimit: 3600
+  olcSizeLimit: 500
+  # Connections
+  olcConnMaxPending: 50
+  olcConnMaxPendingAuth: 1000
+  olcSockbufMaxIncoming: 262143
+  olcSockbufMaxIncomingAuth: 4194303
+  # Indexing
+  olcIndexSubstrIfMinLen: 2
+  olcIndexSubstrIfMaxLen: 4
+  olcIndexSubstrAnyLen: 4
+  olcIndexSubstrAnyStep: 2
+  olcIndexIntLen: 4
+  # Miscellaneous
+  olcReverseLookup: "FALSE"
+  olcReadOnly: "FALSE"
+# Frontend database configuration
+default_frontend_config:
+  # General
+  olcDatabase: "{-1}frontend"
+  olcReadOnly: "FALSE"
+  olcHidden: "FALSE"
+  olcLastMod: "TRUE"
+  olcAddContentAcl: "TRUE"
+  olcAccess: [ "'to * by * read'" ]
+  olcSyncUseSubentry: "FALSE"
+  olcMirrorMode: "FALSE"
+  olcSchemaDN: "cn=Subschema"
+  olcMaxDerefDepth: 15
+  olcMonitoring: "FALSE"
+# OLC database configuration
+default_olc_config:
+  # General
+  olcDatabase: "{0}config"
+  olcReadOnly: "FALSE"
+  olcLastMod: "TRUE"
+  olcRootDN: "{{ slapd_olc_rootdn }}"
+  olcRootPW: "{{ hashedOLCPassword.stdout }}"
+  olcAddContentAcl: "TRUE"
+  olcAccess: [ "'to * by * none'" ]
+  olcSyncUseSubentry: "FALSE"
+  olcMaxDerefDepth: 15
+  olcMonitoring: "FALSE"
+# Monitor database configuration
+default_monitor_config:
+  # General
+  olcDatabase: "{1}monitor"
+  olcAccess: [ "'to * by * none'" ]
+  olcRootDN: "cn=root,cn=monitor"
+  olcRootPW: "{{ hashedMonitorPassword.stdout }}"
+# MDB database configuration
+default_mdb_config:
+  # General
+  olcDatabase: "{2}mdb"
+  olcDbDirectory: "{{ db_dir | mandatory }}"
+  olcAccess: [ "'to * by * none'" ]
+  olcRootDN: "cn=root,{{ mdb_config.olcSuffix | mandatory }}"
+  olcRootPW: "{{ hashedMdbPassword.stdout }}"
+  olcDbNoSync: "TRUE"
+  olcDbCheckpoints: "'8192 15'"
+  olcDbMode: "0600"
+  olcDbSearchStack: 16

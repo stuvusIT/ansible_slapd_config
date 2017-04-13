@@ -19,20 +19,33 @@ A dpkg- or pacman-based Linux distribution.
 This role requires the variables that are exported by `slapd-base`, so run it first or check out the variables to set there.
 There are some role-global variables:
 
-| Name                      | Required                 | Default         | Description                                                                     |
-|---------------------------|:------------------------:|-----------------|---------------------------------------------------------------------------------|
-| `enable_monitor`          | :heavy_check_mark:       | `true`          | Load the monitor module (if required) and configure the monitor database.       |
-| `modules_path`            | :heavy_check_mark:       | `/usr/lib/ldap` | Path to dynamic modules, if backends are required but need to be loaded.        |
-| `additional_modules`      | :heavy_multiplication_x: |                 | Also load these modules (apart from MDB and monitor) if not compiled in.        |
-| `olc_rootdn_password`     | :heavy_check_mark:       |                 | Password to access the OLC. Not automatically exported by `slapd-base`.         |
-| `monitor_rootdn_password` | :heavy_check_mark:       |                 | The rootdn password for the monitor database. Will automatically be hashed.     |
-| `mdb_rootdn_password`     | :heavy_check_mark:       |                 | The rootdn password for the MDB database. Will automatically be hashed.         |
-| `schemas`                 | :heavy_multiplication_x: |                 | Array of paths to schema files to load.                                         |
-| `global_config`           | :heavy_check_mark:       | See description | Every single global slapd configuration option. See below for each description. |
-| `olc_config`              | :heavy_multiplication_x: | See description | Every single global configuration value for the OLC database.                   |
-| `monitor_config`          | :heavy_multiplication_x: | See description | Every single global configuration value for the monitor database.               |
-| `mdb_config`              | :heavy_check_mark:       | See description | Every single global configuration value for the MDB database.                   |
-| `mdb_overlays`            | :heavy_multiplication_x: | See description | Every module for the MDB. See example for an example.                           |
+| Name                            | Required                 | Default         | Description                                                                     |
+|---------------------------------|:------------------------:|-----------------|---------------------------------------------------------------------------------|
+| `slapd_enable_monitor`          | :heavy_check_mark:       | `true`          | Load the monitor module (if required) and configure the monitor database.       |
+| `slapd_modules_path`            | :heavy_check_mark:       | `/usr/lib/ldap` | Path to dynamic modules, if backends are required but need to be loaded.        |
+| `slapd_additional_modules`      | :heavy_multiplication_x: |                 | Also load these modules (apart from MDB and monitor) if not compiled in.        |
+| `slapd_olc_rootdn_password`     | :heavy_check_mark:       |                 | Password to access the OLC. Not automatically exported by `slapd-base`.         |
+| `slapd_monitor_rootdn_password` | :heavy_check_mark:       |                 | The rootdn password for the monitor database. Will automatically be hashed.     |
+| `slapd_mdb_rootdn_password`     | :heavy_check_mark:       |                 | The rootdn password for the MDB database. Will automatically be hashed.         |
+| `slapd_schemas`                 | :heavy_multiplication_x: |                 | Array of paths to schema files to load.                                         |
+| `slapd_global_config`           | :heavy_check_mark:       | See description | Every single global slapd configuration option. See below for each description. |
+| `slapd_olc_config`              | :heavy_multiplication_x: | See description | Every single global configuration value for the OLC database.                   |
+| `slapd_monitor_config`          | :heavy_multiplication_x: | See description | Every single global configuration value for the monitor database.               |
+| `slapd_mdb_config`              | :heavy_check_mark:       | See description | Every single global configuration value for the MDB database.                   |
+| `slapd_mdb_overlays`            | :heavy_multiplication_x: | See description | Every module for the MDB. See example for an example.                           |
+
+#### slapd-config variables
+
+You need to set these variables if `slapd-base` was not run in a previous step in this playbook.
+All variables are required.
+
+| Name                 | Required           | Default | Description                                                |
+|----------------------|:------------------:|---------|------------------------------------------------------------|
+| `slapd_run_dir`      | :heavy_check_mark: |         | Runtime directory for args file, pid file and ldapi socket |
+| `slapd_ldapi_socket` | :heavy_check_mark: |         | ldapi unix socket for local slapd administration           |
+| `slapd_olc_dir`      | :heavy_check_mark: |         | Path where the LDIF files of the OLC reside                |
+| `slapd_olc_rootdn`   | :heavy_check_mark: |         | Rootdn of the OLC                                          |
+
 
 #### Global configuration options
 
@@ -40,14 +53,14 @@ The global slapd OLC configuration is separated into different sections.
 
 ###### General configuration
 
-| Name            | Required                 | Default                  | Description                                                                                             |
-|-----------------|:------------------------:|--------------------------|---------------------------------------------------------------------------------------------------------|
-| `olcConfigFile` | :heavy_multiplication_x: |                          | Path to a configuration file to load. Superseded by the OLC.                                            |
-| `olcConfigDir`  | :heavy_check_mark:       | `{{olc_dir}}`            | Path to the OLC database files.                                                                         |
-| `olcArgsFile`   | :heavy_multiplication_x: | `{{run_dir}}/slapd.args` | slapd will write its arguments to this file.                                                            |
-| `olcPidFile`    | :heavy_check_mark:       | `{{run_dir}}/slapd.pid`  | slapd will write its PID to this file.                                                                  |
-| `olcGentleHUP`  | :heavy_multiplication_x: | `FALSE`                  | When `TRUE`, slapd will not kill existing connections on `SIGHUP`, but will wait for them to terminate. |
-| `olcServerID`   | :heavy_multiplication_x: | `0`                      | ID of this server. Only required with multi-master replication.                                         |
+| Name            | Required                 | Default                        | Description                                                                                             |
+|-----------------|:------------------------:|--------------------------------|---------------------------------------------------------------------------------------------------------|
+| `olcConfigFile` | :heavy_multiplication_x: |                                | Path to a configuration file to load. Superseded by the OLC.                                            |
+| `olcConfigDir`  | :heavy_check_mark:       | `{{slapd_olc_dir}}`            | Path to the OLC database files.                                                                         |
+| `olcArgsFile`   | :heavy_multiplication_x: | `{{slapd_run_dir}}/slapd.args` | slapd will write its arguments to this file.                                                            |
+| `olcPidFile`    | :heavy_check_mark:       | `{{slapd_run_dir}}/slapd.pid`  | slapd will write its PID to this file.                                                                  |
+| `olcGentleHUP`  | :heavy_multiplication_x: | `FALSE`                        | When `TRUE`, slapd will not kill existing connections on `SIGHUP`, but will wait for them to terminate. |
+| `olcServerID`   | :heavy_multiplication_x: | `0`                            | ID of this server. Only required with multi-master replication.                                         |
 
 ###### Security-related configuration
 
@@ -232,38 +245,38 @@ The MDB database also has some more attributes which are only supported on this 
 
 #### Default values for each database
 
-| Name                     | Frontend default   | OLC default         | Monitor default      | MDB default             |
-|:------------------------:|:------------------:|:-------------------:|:--------------------:|:-----------------------:|
-| `olcSuffix`              |                    |                     |                      | :exclamation:           |
-| `olcReadOnly`            | `FALSE`            | `FALSE`             |                      |                         |
-| `olcHidden`              | `FALSE`            |                     |                      |                         |
-| `olcLastMod`             | `TRUE`             | `TRUE`              |                      |                         |
-| `olcSubordinate`         |                    |                     |                      |                         |
-| `olcSecurity`            |                    |                     |                      |                         |
-| `olcRootDN`              |                    | `{{olc_rootdn}}`    | `cn=root,cn=monitor` | `cn=root,{{olcSuffix}}` |
-| `olcRootPW`              |                    | `[Hashed password]` | `[Hashed password]`  | `[Hashed password]`     |
-| `olcRequires`            |                    |                     |                      |                         |
-| `olcRestrict`            |                    |                     |                      |                         |
-| `olcAddContentAcl`       | `TRUE`             | `TRUE`              |                      |                         |
-| `olcAccess`              | `'to * by * read'` | `'to * by * none'`  | `'to * by * none'`   | `'to * by * none'`      |
-| `olcTimeLimit`           |                    |                     |                      |                         |
-| `olcSizeLimit`           |                    |                     |                      |                         |
-| `olcLimits`              |                    |                     |                      |                         |
-| `olcSyncrepl`            |                    |                     |                      |                         |
-| `olcUpdateDN`            |                    |                     |                      |                         |
-| `olcSyncUseSubentry`     | `FALSE`            | `FALSE`             |                      |                         |
-| `olcUpdateRef`           |                    |                     |                      |                         |
-| `olcMirrorMode`          | `FALSE`            |                     |                      |                         |
-| `olcReplica`             |                    |                     |                      |                         |
-| `olcReplicaArgsFile`     |                    |                     |                      |                         |
-| `olcReplicaPidFile`      |                    |                     |                      |                         |
-| `olcReplicationInterval` |                    |                     |                      |                         |
-| `olcReplogFile`          |                    |                     |                      |                         |
-| `olcSchemaDN`            | `cn=Subschema`     |                     |                      |                         |
-| `olcMaxDerefDepth`       | `15`               | `15`                |                      |                         |
-| `olcPlugin`              |                    |                     |                      |                         |
-| `olcMonitoring`          | `FALSE`            | `FALSE`             |                      |                         |
-| `olcExtraAttrs`          |                    |                     |                      |                         |
+| Name                     | Frontend default   | OLC default            | Monitor default      | MDB default             |
+|:------------------------:|:------------------:|:----------------------:|:--------------------:|:-----------------------:|
+| `olcSuffix`              |                    |                        |                      | :exclamation:           |
+| `olcReadOnly`            | `FALSE`            | `FALSE`                |                      |                         |
+| `olcHidden`              | `FALSE`            |                        |                      |                         |
+| `olcLastMod`             | `TRUE`             | `TRUE`                 |                      |                         |
+| `olcSubordinate`         |                    |                        |                      |                         |
+| `olcSecurity`            |                    |                        |                      |                         |
+| `olcRootDN`              |                    | `{{slapd_olc_rootdn}}` | `cn=root,cn=monitor` | `cn=root,{{olcSuffix}}` |
+| `olcRootPW`              |                    | `[Hashed password]`    | `[Hashed password]`  | `[Hashed password]`     |
+| `olcRequires`            |                    |                        |                      |                         |
+| `olcRestrict`            |                    |                        |                      |                         |
+| `olcAddContentAcl`       | `TRUE`             | `TRUE`                 |                      |                         |
+| `olcAccess`              | `'to * by * read'` | `'to * by * none'`     | `'to * by * none'`   | `'to * by * none'`      |
+| `olcTimeLimit`           |                    |                        |                      |                         |
+| `olcSizeLimit`           |                    |                        |                      |                         |
+| `olcLimits`              |                    |                        |                      |                         |
+| `olcSyncrepl`            |                    |                        |                      |                         |
+| `olcUpdateDN`            |                    |                        |                      |                         |
+| `olcSyncUseSubentry`     | `FALSE`            | `FALSE`                |                      |                         |
+| `olcUpdateRef`           |                    |                        |                      |                         |
+| `olcMirrorMode`          | `FALSE`            |                        |                      |                         |
+| `olcReplica`             |                    |                        |                      |                         |
+| `olcReplicaArgsFile`     |                    |                        |                      |                         |
+| `olcReplicaPidFile`      |                    |                        |                      |                         |
+| `olcReplicationInterval` |                    |                        |                      |                         |
+| `olcReplogFile`          |                    |                        |                      |                         |
+| `olcSchemaDN`            | `cn=Subschema`     |                        |                      |                         |
+| `olcMaxDerefDepth`       | `15`               | `15`                   |                      |                         |
+| `olcPlugin`              |                    |                        |                      |                         |
+| `olcMonitoring`          | `FALSE`            | `FALSE`                |                      |                         |
+| `olcExtraAttrs`          |                    |                        |                      |                         |
 
 ## Dependencies
 
@@ -276,14 +289,14 @@ Also, `schema2ldif` should be installed.
 - hosts: ldap
   roles:
   - slapd-config
-    modules_path: /usr/lib/openldap
-    olc_rootdn_password: hello
-    mdb_rootdn_password: hello
-    monitor_rootdn_password: hello
-    additional_modules: [ 'memberof' ]
+    slapd_modules_path: /usr/lib/openldap
+    slapd_olc_rootdn_password: water
+    slapd_mdb_rootdn_password: water
+    slapd_monitor_rootdn_password: water
+    slapd_additional_modules: [ 'memberof' ]
     mdb_config:
       olcSuffix: "dc=example,dc=com"
-    mdb_overlays
+    slpd_mdb_overlays:
       memberof:
         olcOverlay: memberof
         objectClass: olcMemberOf

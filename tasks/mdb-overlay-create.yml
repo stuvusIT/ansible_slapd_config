@@ -1,13 +1,13 @@
 ---
 - name: Create MDB Overlays
   command: >
-    /usr/local/bin/slapd-create-overlay "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}"
+    /usr/local/bin/slapd-create-overlay "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
     "olcDatabase={2}mdb,cn=config"
     "{{ item.key }}" "{{ item.value.objectClass }}"
   environment:
-    bindpw: "{{ olc_rootdn_password | mandatory }}"
+    bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out
   changed_when: "'CHANGED' in out.stdout"
-  with_dict: "{{ mdb_overlays }}"
-  when: "mdb_overlays is not undefined"
+  with_dict: "{{ slapd_mdb_overlays }}"
+  when: "slapd_mdb_overlays is not undefined"
 

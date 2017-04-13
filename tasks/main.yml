@@ -27,14 +27,14 @@
 - include: olc-config.yml
 # Monitor
 - include: monitor-create.yml
-  when: enable_monitor
+  when: slapd_enable_monitor
 - include: monitor-config.yml
-  when: enable_monitor
+  when: slapd_enable_monitor
 # MDB
 - include: mdb-create.yml
 - include: mdb-overlay-create.yml
-  when: "mdb_overlays is not undefined"
+  when: "slapd_mdb_overlays is not undefined"
 - include: mdb-overlay-config.yml
-  with_dict: "{{ mdb_overlays }}"
-  when: "mdb_overlays is not undefined"
+  with_dict: "{{ slapd_mdb_overlays }}"
+  when: "slapd_mdb_overlays is not undefined"
 - include: mdb-config.yml
