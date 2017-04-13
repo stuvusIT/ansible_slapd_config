@@ -1,10 +1,10 @@
 ---
 - name: Load LDAP schemas
   command: >
-    /usr/local/bin/slapd-global-schema "{{ ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ olc_rootdn }}"
-    "{{ item }}" "{{ olc_dir }}"
+    /usr/local/bin/slapd-global-schema "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
+    "{{ item }}" "{{ slapd_olc_dir }}"
   environment:
-    bindpw: "{{ olc_rootdn_password | mandatory }}"
+    bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out
   changed_when: "'CHANGED' in out.stdout"
-  with_items: "{{ schemas }}"
+  with_items: "{{ slapd_schemas }}"
