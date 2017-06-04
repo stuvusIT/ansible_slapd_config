@@ -7,4 +7,5 @@
     bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out
   changed_when: "'CHANGED' in out.stdout"
+  when: "slapd_schemas is defined"
   with_items: "{{ slapd_schemas }}"
