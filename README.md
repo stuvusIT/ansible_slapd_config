@@ -18,32 +18,32 @@ A dpkg- or pacman-based Linux distribution.
 
 There are some role-global variables:
 
-| Name                            | Required                 | Default         | Description                                                                     |
-|---------------------------------|:------------------------:|-----------------|---------------------------------------------------------------------------------|
-| `slapd_enable_monitor`          | :heavy_check_mark:       | `true`          | Load the monitor module (if required) and configure the monitor database.       |
-| `slapd_modules_path`            | :heavy_check_mark:       | `/usr/lib/ldap` | Path to dynamic modules, if backends are required but need to be loaded.        |
-| `slapd_additional_modules`      | :heavy_multiplication_x: |                 | Also load these modules (apart from MDB and monitor) if not compiled in.        |
-| `slapd_olc_rootdn_password`     | :heavy_check_mark:       |                 | Password to access the OLC. Not automatically exported by `slapd-base`.         |
-| `slapd_monitor_rootdn_password` | :heavy_check_mark:       |                 | The rootdn password for the monitor database. Will automatically be hashed.     |
-| `slapd_mdb_rootdn_password`     | :heavy_check_mark:       |                 | The rootdn password for the MDB database. Will automatically be hashed.         |
-| `slapd_schemas`                 | :heavy_multiplication_x: |                 | Array of paths to schema files to load.                                         |
-| `slapd_global_config`           | :heavy_check_mark:       | See description | Every single global slapd configuration option. See below for each description. |
-| `slapd_olc_config`              | :heavy_multiplication_x: | See description | Every single global configuration value for the OLC database.                   |
-| `slapd_monitor_config`          | :heavy_multiplication_x: | See description | Every single global configuration value for the monitor database.               |
-| `slapd_mdb_config`              | :heavy_check_mark:       | See description | Every single global configuration value for the MDB database.                   |
-| `slapd_mdb_overlays`            | :heavy_multiplication_x: | See description | Every module for the MDB. See example for an example.                           |
+| Name                            | Default/Required   | Description                                                                     |
+|---------------------------------|:------------------:|---------------------------------------------------------------------------------|
+| `slapd_enable_monitor`          | `true`             | Load the monitor module (if required) and configure the monitor database.       |
+| `slapd_modules_path`            | `/usr/lib/ldap`    | Path to dynamic modules, if backends are required but need to be loaded.        |
+| `slapd_additional_modules`      |                    | Also load these modules (apart from MDB and monitor) if not compiled in.        |
+| `slapd_olc_rootdn_password`     | :heavy_check_mark: | Password to access the OLC. Not automatically exported by `slapd-base`.         |
+| `slapd_monitor_rootdn_password` | :heavy_check_mark: | The rootdn password for the monitor database. Will automatically be hashed.     |
+| `slapd_mdb_rootdn_password`     | :heavy_check_mark: | The rootdn password for the MDB database. Will automatically be hashed.         |
+| `slapd_schemas`                 |                    | Array of paths to schema files to load.                                         |
+| `slapd_global_config`           | See description    | Every single global slapd configuration option. See below for each description. |
+| `slapd_olc_config`              | See description    | Every single global configuration value for the OLC database.                   |
+| `slapd_monitor_config`          | See description    | Every single global configuration value for the monitor database.               |
+| `slapd_mdb_config`              | :heavy_check_mark: | Every single global configuration value for the MDB database.                   |
+| `slapd_mdb_overlays`            | See description    | Every module for the MDB. See example for an example.                           |
 
 #### slapd-config variables
 
 You need to set these variables if `slapd-base` was not run in a previous step in this playbook.
 All variables are required.
 
-| Name                 | Required           | Default | Description                                                |
-|----------------------|:------------------:|---------|------------------------------------------------------------|
-| `slapd_run_dir`      | :heavy_check_mark: |         | Runtime directory for args file, pid file and ldapi socket |
-| `slapd_ldapi_socket` | :heavy_check_mark: |         | ldapi unix socket for local slapd administration           |
-| `slapd_olc_dir`      | :heavy_check_mark: |         | Path where the LDIF files of the OLC reside                |
-| `slapd_olc_rootdn`   | :heavy_check_mark: |         | Rootdn of the OLC                                          |
+| Name                 | Default/Required   | Description                                                |
+|----------------------|:------------------:|------------------------------------------------------------|
+| `slapd_run_dir`      | :heavy_check_mark: | Runtime directory for args file, pid file and ldapi socket |
+| `slapd_ldapi_socket` | :heavy_check_mark: | ldapi unix socket for local slapd administration           |
+| `slapd_olc_dir`      | :heavy_check_mark: | Path where the LDIF files of the OLC reside                |
+| `slapd_olc_rootdn`   | :heavy_check_mark: | Rootdn of the OLC                                          |
 
 
 #### Global configuration options
@@ -52,112 +52,112 @@ The global slapd OLC configuration is separated into different sections.
 
 ###### General configuration
 
-| Name            | Required                 | Default                        | Description                                                                                             |
-|-----------------|:------------------------:|--------------------------------|---------------------------------------------------------------------------------------------------------|
-| `olcConfigFile` | :heavy_multiplication_x: |                                | Path to a configuration file to load. Superseded by the OLC.                                            |
-| `olcConfigDir`  | :heavy_check_mark:       | `{{slapd_olc_dir}}`            | Path to the OLC database files.                                                                         |
-| `olcArgsFile`   | :heavy_multiplication_x: | `{{slapd_run_dir}}/slapd.args` | slapd will write its arguments to this file.                                                            |
-| `olcPidFile`    | :heavy_check_mark:       | `{{slapd_run_dir}}/slapd.pid`  | slapd will write its PID to this file.                                                                  |
-| `olcGentleHUP`  | :heavy_multiplication_x: | `FALSE`                        | When `TRUE`, slapd will not kill existing connections on `SIGHUP`, but will wait for them to terminate. |
-| `olcServerID`   | :heavy_multiplication_x: | `0`                            | ID of this server. Only required with multi-master replication.                                         |
+| Name            | Default/Required               | Description                                                                                             |
+|-----------------|:------------------------------:|---------------------------------------------------------------------------------------------------------|
+| `olcConfigFile` |                                | Path to a configuration file to load. Superseded by the OLC.                                            |
+| `olcConfigDir`  | `{{slapd_olc_dir}}`            | Path to the OLC database files.                                                                         |
+| `olcArgsFile`   | `{{slapd_run_dir}}/slapd.args` | slapd will write its arguments to this file.                                                            |
+| `olcPidFile`    | `{{slapd_run_dir}}/slapd.pid`  | slapd will write its PID to this file.                                                                  |
+| `olcGentleHUP`  | `FALSE`                        | When `TRUE`, slapd will not kill existing connections on `SIGHUP`, but will wait for them to terminate. |
+| `olcServerID`   | `0`                            | ID of this server. Only required with multi-master replication.                                         |
 
 ###### Security-related configuration
 
-| Name                         | Required                 | Default                 | Description                                                                                                                                         |
-|------------------------------|:------------------------:|-------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| `olcAllows`                  | :heavy_multiplication_x: |                         | A set of features to allow.                                                                                                                         |
-| `olcDisallows`               | :heavy_multiplication_x: |                         | A set of features to disallow.                                                                                                                      |
-| `olcRequires`                | :heavy_multiplication_x: | `bind`                  | A set of conditions to require.                                                                                                                     |
-| `olcRestrict`                | :heavy_multiplication_x: |                         | A list of operations that are restructed.                                                                                                           |
-| `olcSecurity`                | :heavy_multiplication_x: | `ssf=1 simple_bind=128` | Specify a set of security strength factors to require.                                                                                              |
-| `olcAuthIDRewrite`           | :heavy_multiplication_x: |                         | Used to convert simple user names to an LDAP DN used for auth purposes.                                                                             |
-| `olcAuthzRegexp`             | :heavy_multiplication_x: |                         | Used to convert simple user names to an LDAP DN used for auth purposes. Can be specified multiple times and requires server restart to take effect. |
-| `olcAuthzPolicy`             | :heavy_multiplication_x: | `none`                  | Which rules to use for Proxy Authorization.                                                                                                         |
-| `olcLocalSSF`                | :heavy_multiplication_x: | `300`                   | Assumed SSF for LDAPI connections.                                                                                                                  |
-| `olcPasswordHash`            | :heavy_multiplication_x: | `{SSHA}`                | One or more hashing algorithms to use for password change extended modifications.                                                                   |
-| `olcPasswordCryptSaltFormat` | :heavy_multiplication_x: | `%s`                    | The format of the salt when hashing passwords with `crypt()`.                                                                                       |
+| Name                         | Default/Required        | Description                                                                                                                                         |
+|------------------------------|:-----------------------:|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `olcAllows`                  |                         | A set of features to allow.                                                                                                                         |
+| `olcDisallows`               |                         | A set of features to disallow.                                                                                                                      |
+| `olcRequires`                | `bind`                  | A set of conditions to require.                                                                                                                     |
+| `olcRestrict`                |                         | A list of operations that are restructed.                                                                                                           |
+| `olcSecurity`                | `ssf=1 simple_bind=128` | Specify a set of security strength factors to require.                                                                                              |
+| `olcAuthIDRewrite`           |                         | Used to convert simple user names to an LDAP DN used for auth purposes.                                                                             |
+| `olcAuthzRegexp`             |                         | Used to convert simple user names to an LDAP DN used for auth purposes. Can be specified multiple times and requires server restart to take effect. |
+| `olcAuthzPolicy`             | `none`                  | Which rules to use for Proxy Authorization.                                                                                                         |
+| `olcLocalSSF`                | `300`                   | Assumed SSF for LDAPI connections.                                                                                                                  |
+| `olcPasswordHash`            | `{SSHA}`                | One or more hashing algorithms to use for password change extended modifications.                                                                   |
+| `olcPasswordCryptSaltFormat` | `%s`                    | The format of the salt when hashing passwords with `crypt()`.                                                                                       |
 
 ###### TLS configuration
 
-| Name                       | Required                 | Default | Description                                                                    |
-|----------------------------|:------------------------:|---------|--------------------------------------------------------------------------------|
-| `olcTLSCertificateFile`    | :heavy_multiplication_x: |         | Public key file for slapd.                                                     |
-| `olcTLSCertificateKeyFile` | :heavy_multiplication_x: |         | Private key for slapd.                                                         |
-| `olcTLSRandFile`           | :heavy_multiplication_x: |         | The file to obtain random bits from when urandom is not available.             |
-| `olcTLSDHParamFile`        | :heavy_multiplication_x: |         | File containting primes for the Diffie-Hellman ephermal key exchange.          |
-| `olcTLSCipherSuite`        | :heavy_multiplication_x: |         | TLS cipher suites to use.                                                      |
-| `olcTLSProtocolMin`        | :heavy_multiplication_x: |         | Minimum TLS version to require. Default is the highest possible level.         |
-| `olcTLSCACertificateFile`  | :heavy_multiplication_x: |         | Path to a file containing all trusted certificate authorities.                 |
-| `olcTLSCACertificatePath`  | :heavy_multiplication_x: |         | Path to a directory containing files with all trusted certificate authorities. |
-| `olcTLSCRLCheck`           | :heavy_multiplication_x: | `none`  | If the CRL of the CA should be checked on connections.                         |
-| `olcTLSVerifyClient`       | :heavy_multiplication_x: | `never` | When to verify the identity of the client.                                     |
+| Name                       | Default/Required | Description                                                                    |
+|----------------------------|:----------------:|--------------------------------------------------------------------------------|
+| `olcTLSCertificateFile`    |                  | Public key file for slapd.                                                     |
+| `olcTLSCertificateKeyFile` |                  | Private key for slapd.                                                         |
+| `olcTLSRandFile`           |                  | The file to obtain random bits from when urandom is not available.             |
+| `olcTLSDHParamFile`        |                  | File containting primes for the Diffie-Hellman ephermal key exchange.          |
+| `olcTLSCipherSuite`        |                  | TLS cipher suites to use.                                                      |
+| `olcTLSProtocolMin`        |                  | Minimum TLS version to require. Default is the highest possible level.         |
+| `olcTLSCACertificateFile`  |                  | Path to a file containing all trusted certificate authorities.                 |
+| `olcTLSCACertificatePath`  |                  | Path to a directory containing files with all trusted certificate authorities. |
+| `olcTLSCRLCheck`           | `none`           | If the CRL of the CA should be checked on connections.                         |
+| `olcTLSVerifyClient`       | `never`          | When to verify the identity of the client.                                     |
 
 ###### Logging configuration
 
-| Name               | Required                 | Default | Description                                        |
-|--------------------|:------------------------:|---------|----------------------------------------------------|
-| `olcLogLevel`      | :heavy_multiplication_x: | `stats` | Logging level configuration for each subsystem.    |
-| `olcLogFile`       | :heavy_multiplication_x: |         | File to log to. slapd will always log to stderr.   |
-| `olcPluginLogFile` | :heavy_multiplication_x: |         | File to log slapi plugin output to.                |
-| `olcReplogFile`    | :heavy_multiplication_x: |         | File for the replog which may be read by `slurpd`. |
+| Name               | Default/Required | Description                                        |
+|--------------------|:----------------:|----------------------------------------------------|
+| `olcLogLevel`      | `stats`          | Logging level configuration for each subsystem.    |
+| `olcLogFile`       |                  | File to log to. slapd will always log to stderr.   |
+| `olcPluginLogFile` |                  | File to log slapi plugin output to.                |
+| `olcReplogFile`    |                  | File for the replog which may be read by `slurpd`. |
 
 ###### Threading configuration
 
-| Name                 | Required                 | Default | Description                                                                                       |
-|----------------------|:------------------------:|---------|---------------------------------------------------------------------------------------------------|
-| `olcConcurrency`     | :heavy_multiplication_x: |         | Threading hint for the operating system. Not used under Linux.                                    |
-| `olcListenerThreads` | :heavy_check_mark:       | `1`     | Amount of threads for listening for connections. 1 is enough for up to 16 cores.                  |
-| `olcThreads`         | :heavy_check_mark:       | `16`    | Amount of CPU threads for request processing.                                                     |
-| `olcToolThreads`     | :heavy_check_mark:       | `1`     | Amount of CPU threads when running in tool mode. Should not exceed amount of cores in the system. |
+| Name                 | Default/Required | Description                                                                                       |
+|----------------------|:----------------:|---------------------------------------------------------------------------------------------------|
+| `olcConcurrency`     |                  | Threading hint for the operating system. Not used under Linux.                                    |
+| `olcListenerThreads` | `1`              | Amount of threads for listening for connections. 1 is enough for up to 16 cores.                  |
+| `olcThreads`         | `16`             | Amount of CPU threads for request processing.                                                     |
+| `olcToolThreads`     | `1`              | Amount of CPU threads when running in tool mode. Should not exceed amount of cores in the system. |
 
 ###### Timeouts and limits
 
-| Name              | Required                 | Default | Description                                                                                    |
-|-------------------|:------------------------:|---------|------------------------------------------------------------------------------------------------|
-| `olcIdleTimeout`  | :heavy_multiplication_x: | `0`     | Amount of seconds a client can do nothing before getting disconnected.                         |
-| `olcWriteTimeout` | :heavy_multiplication_x: | `0`     | Amount of seconds a client with outstanding writes can do nothing before getting disconnected. |
-| `olcTimeLimit`    | :heavy_multiplication_x: | `3600`  | Maximum number of seconds slapd will spend answering a requirest. Allows an `unlimited` value. |
-| `olcSizeLimit`    | :heavy_multiplication_x: | `500`   | Maximmum number of entries to return from a search.                                            |
+| Name              | Default/Required | Description                                                                                    |
+|-------------------|:----------------:|------------------------------------------------------------------------------------------------|
+| `olcIdleTimeout`  | `0`              | Amount of seconds a client can do nothing before getting disconnected.                         |
+| `olcWriteTimeout` | `0`              | Amount of seconds a client with outstanding writes can do nothing before getting disconnected. |
+| `olcTimeLimit`    | `3600`           | Maximum number of seconds slapd will spend answering a requirest. Allows an `unlimited` value. |
+| `olcSizeLimit`    | `500`            | Maximmum number of entries to return from a search.                                            |
 
 ###### Connections
 
-| Name                        | Required                 | Default   | Description                                                           |
-|-----------------------------|:------------------------:|-----------|-----------------------------------------------------------------------|
-| `olcConnMaxPending`         | :heavy_multiplication_x: | `50`      | Maximum number of pending requests in anonymous sessions.             |
-| `olcConnMaxPendingAuth`     | :heavy_multiplication_x: | `1000`    | Maximum number of pending requests in authenticated sessions.         |
-| `olcTCPBuffer`              | :heavy_multiplication_x: |           | Size of the TCP buffer. Operating system may automatically tune this. |
-| `olcSockbufMaxIncoming`     | :heavy_multiplication_x: | `262143`  | Maximum size of the LDAP PDU for anonymous sessions.                  |
-| `olcSockbufMaxIncomingAuth` | :heavy_multiplication_x: | `4194303` | Maximum size of the LDAP PDU for authenticated sessions.              |
+| Name                        | Default/Required | Description                                                           |
+|-----------------------------|:----------------:|-----------------------------------------------------------------------|
+| `olcConnMaxPending`         | `50`             | Maximum number of pending requests in anonymous sessions.             |
+| `olcConnMaxPendingAuth`     | `1000`           | Maximum number of pending requests in authenticated sessions.         |
+| `olcTCPBuffer`              |                  | Size of the TCP buffer. Operating system may automatically tune this. |
+| `olcSockbufMaxIncoming`     | `262143`         | Maximum size of the LDAP PDU for anonymous sessions.                  |
+| `olcSockbufMaxIncomingAuth` | `4194303`        | Maximum size of the LDAP PDU for authenticated sessions.              |
 
 ###### SASL
 
-| Name              | Required                 | Default | Description                                              |
-|-------------------|:------------------------:|---------|----------------------------------------------------------|
-| `olcSaslHost`     | :heavy_multiplication_x: |         | Fully qualified domain name used for SASL processing.    |
-| `olcSaslRealm`    | :heavy_multiplication_x: |         | The SASL realm for SASL processing.                      |
-| `olcSaslSecProps` | :heavy_multiplication_x: |         | Specify Cyrus SASL security properties.                  |
-| `olcSaslAuxprops` | :heavy_multiplication_x: |         | Which auxprop plugins to use for authentication lookups. |
+| Name              | Default/Required | Description                                              |
+|-------------------|:----------------:|----------------------------------------------------------|
+| `olcSaslHost`     |                  | Fully qualified domain name used for SASL processing.    |
+| `olcSaslRealm`    |                  | The SASL realm for SASL processing.                      |
+| `olcSaslSecProps` |                  | Specify Cyrus SASL security properties.                  |
+| `olcSaslAuxprops` |                  | Which auxprop plugins to use for authentication lookups. |
 
 ###### Indexing
 
-| Name                     | Required                 | Default | Description                                                                                                |
-|--------------------------|:------------------------:|---------|------------------------------------------------------------------------------------------------------------|
-| `olcIndexSubstrIfMinLen` | :heavy_multiplication_x: | `2`     | The minimum length of subinitial and subfinal indices.                                                     |
-| `olcIndexSubstrIfMaxLen` | :heavy_multiplication_x: | `4`     | The maximum length of subinitial and subfinal indices.                                                     |
-| `olcIndexSubstrAnyLen`   | :heavy_multiplication_x: | `4`     | Length for subany indices. Attributes longer than this length are processed in segments.                   |
-| `olcIndexSubstrAnyStep`  | :heavy_multiplication_x: | `2`     | Steps used in subany lookups. This is the offset for the segments of the filter string that are processed. |
-| `olcIndexIntLen`         | :heavy_multiplication_x: | `4`     | Key length for ordered integer idices.                                                                     |
+| Name                     | Default/Required | Description                                                                                                |
+|--------------------------|:----------------:|------------------------------------------------------------------------------------------------------------|
+| `olcIndexSubstrIfMinLen` | `2`              | The minimum length of subinitial and subfinal indices.                                                     |
+| `olcIndexSubstrIfMaxLen` | `4`              | The maximum length of subinitial and subfinal indices.                                                     |
+| `olcIndexSubstrAnyLen`   | `4`              | Length for subany indices. Attributes longer than this length are processed in segments.                   |
+| `olcIndexSubstrAnyStep`  | `2`              | Steps used in subany lookups. This is the offset for the segments of the filter string that are processed. |
+| `olcIndexIntLen`         | `4`              | Key length for ordered integer idices.                                                                     |
 
 ###### Miscellaneous
 
-| Name                  | Required                 | Default          | Description                                                                                                                                                                    |
-|-----------------------|:------------------------:|------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `olcAttributeOptions` | :heavy_check_mark:       | `x-hidden lang-` | Tagging attribute options or option tag/range prefixes.                                                                                                                        |
-| `olcReferral`         | :heavy_multiplication_x: |                  | A referral URL to pass back when slapd cannot find a local database.                                                                                                           |
-| `olcReverseLookup`    | :heavy_multiplication_x: | `FALSE`          | Enable client name unverified reverse lookups.                                                                                                                                 |
-| `olcRootDSE`          | :heavy_multiplication_x: |                  | Name of an LDIF file containing user defined attributes for the root DSE.                                                                                                      |
-| `olcReadOnly`         | :heavy_check_mark:       | `FALSE`          | Set the entire server into read-only mode. **Warning: Once set to true, this value cannot be changed back without modifying the database files on disk and restarting slapd!** |
-| `olcLdapSyntaxes`     | :heavy_multiplication_x: |                  | I have seriously no idea why this attribute is here. There is no documentation on the internet.                                                                                |
+| Name                  | Default/Required | Description                                                                                                                                                                    |
+|-----------------------|:----------------:|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `olcAttributeOptions` | `x-hidden lang-` | Tagging attribute options or option tag/range prefixes.                                                                                                                        |
+| `olcReferral`         |                  | A referral URL to pass back when slapd cannot find a local database.                                                                                                           |
+| `olcReverseLookup`    | `FALSE`          | Enable client name unverified reverse lookups.                                                                                                                                 |
+| `olcRootDSE`          |                  | Name of an LDIF file containing user defined attributes for the root DSE.                                                                                                      |
+| `olcReadOnly`         | `FALSE`          | Set the entire server into read-only mode. **Warning: Once set to true, this value cannot be changed back without modifying the database files on disk and restarting slapd!** |
+| `olcLdapSyntaxes`     |                  | I have seriously no idea why this attribute is here. There is no documentation on the internet.                                                                                |
 
 #### Database configuration values
 
