@@ -8,5 +8,7 @@ slapd_olc_config:
   dummy: value
 slapd_monitor_config:
   dummy: value
+slapd_frontend_config:
+  dummy: value
 slapd_mdb_config:
   dummy: value

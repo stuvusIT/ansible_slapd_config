@@ -33,7 +33,7 @@ There are some role-global variables:
 | `slapd_mdb_config`              | :heavy_check_mark: | Every single global configuration value for the MDB database.                   |
 | `slapd_mdb_overlays`            | See description    | Every module for the MDB. See example for an example.                           |
 
-#### slapd-config variables
+#### slapd-base variables
 
 You need to set these variables if `slapd-base` was not run in a previous step in this playbook.
 All variables are required.
@@ -42,6 +42,7 @@ All variables are required.
 |----------------------|:------------------:|------------------------------------------------------------|
 | `slapd_run_dir`      | :heavy_check_mark: | Runtime directory for args file, pid file and ldapi socket |
 | `slapd_ldapi_socket` | :heavy_check_mark: | ldapi unix socket for local slapd administration           |
+| `slapd_mdb_dir`      | :heavy_check_mark: | Directory where the MDB resides in                         |
 | `slapd_olc_dir`      | :heavy_check_mark: | Path where the LDIF files of the OLC reside                |
 | `slapd_olc_rootdn`   | :heavy_check_mark: | Rootdn of the OLC                                          |
 
@@ -230,17 +231,17 @@ The MDB database also has some more attributes which are only supported on this 
 
 **These settings only apply to the MDB database!**
 
-| Name               | Required                 | Default      | Description                                                    |
-|--------------------|:------------------------:|--------------|----------------------------------------------------------------|
-| `olcDbDirectory`   | :heavy_check_mark:       | `{{db_dir}}` | Path to the database directory on disk.                        |
-| `olcDbNoSync`      | :heavy_multiplication_x: | `TRUE`       | Do not sync immediately after data was received.               |
-| `olcDbCheckpoint`  | :heavy_multiplication_x: | `8192 15`    | How often (KB/minutes) to flush the database to disk.          |
-| `olcDbMaxReaders`  | :heavy_multiplication_x: |              | Maximum number of threads that may access the DB concurrently. |
-| `olcDbMaxSize`     | :heavy_multiplication_x: |              | Maximum size of DB in bytes.                                   |
-| `olcDbMode`        | :heavy_multiplication_x: | `0600`       | File mode of database files.                                   |
-| `olcDbSearchStack` | :heavy_multiplication_x: | `16`         | Depth of the stack during search filter evaulations.           |
-| `olcDbRtxnSize`    | :heavy_multiplication_x: |              | Number of entries to process in one read transaction.          |
-| `olcDbIndex`       | :heavy_multiplication_x: |              | Indices to create on this database.                            |
+| Name               | Required                 | Default             | Description                                                    |
+|--------------------|:------------------------:|---------------------|----------------------------------------------------------------|
+| `olcDbDirectory`   | :heavy_check_mark:       | `{{slapd_mdb_dir}}` | Path to the database directory on disk.                        |
+| `olcDbNoSync`      | :heavy_multiplication_x: | `TRUE`              | Do not sync immediately after data was received.               |
+| `olcDbCheckpoint`  | :heavy_multiplication_x: | `8192 15`           | How often (KB/minutes) to flush the database to disk.          |
+| `olcDbMaxReaders`  | :heavy_multiplication_x: |                     | Maximum number of threads that may access the DB concurrently. |
+| `olcDbMaxSize`     | :heavy_multiplication_x: |                     | Maximum size of DB in bytes.                                   |
+| `olcDbMode`        | :heavy_multiplication_x: | `0600`              | File mode of database files.                                   |
+| `olcDbSearchStack` | :heavy_multiplication_x: | `16`                | Depth of the stack during search filter evaulations.           |
+| `olcDbRtxnSize`    | :heavy_multiplication_x: |                     | Number of entries to process in one read transaction.          |
+| `olcDbIndex`       | :heavy_multiplication_x: |                     | Indices to create on this database.                            |
 
 #### Default values for each database
 
