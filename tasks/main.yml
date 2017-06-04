@@ -13,6 +13,7 @@
     - slapd-olc-attribute-clean
     - slapd-global-modules
     - slapd-global-schema
+    - slapd-mdb-create
     - slapd-overlay-attribute-upsert
     - slapd-overlay-dn
     - slapd-overlay-olc-attribute-clean

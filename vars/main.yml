@@ -77,9 +77,9 @@ default_monitor_config:
 default_mdb_config:
   # General
   olcDatabase: "{2}mdb"
-  olcDbDirectory: "{{ db_dir | mandatory }}"
+  olcDbDirectory: "{{ slapd_mdb_dir | mandatory }}"
   olcAccess: [ "'to * by * none'" ]
-  olcRootDN: "cn=root,{{ mdb_config.olcSuffix | mandatory }}"
+  olcRootDN: "cn=root,{{ slapd_mdb_config.olcSuffix | mandatory }}"
   olcRootPW: "{{ hashedMdbPassword.stdout }}"
   olcDbNoSync: "TRUE"
   olcDbCheckpoints: "'8192 15'"
