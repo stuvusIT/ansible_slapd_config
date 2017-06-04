@@ -18,8 +18,8 @@ shift 4
 set +e
 staticModules="$(slapd -VVV 2>&1)"
 set -e
-neededModules=('mdb')
-[ "${monitor}" = 'True' ] && neededModules+=('monitor')
+neededModules=('back_mdb')
+[ "${monitor}" = 'True' ] && neededModules+=('back_monitor')
 for param in "${@}"; do
 	neededModules+=("${param}")
 done
