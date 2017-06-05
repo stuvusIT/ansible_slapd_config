@@ -16,6 +16,7 @@
     - slapd-overlay-attribute-upsert
     - slapd-overlay-dn
     - slapd-overlay-olc-attribute-clean
+    - slapd-password-hash
 
 # Global
 - include: global-schemas.yml

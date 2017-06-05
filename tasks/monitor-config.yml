@@ -1,8 +1,11 @@
 ---
 - name: Hash monitor password
-  command: "/bin/bash -c '/usr/sbin/slappasswd -n -T /dev/stdin < <(echo -n $password)'"
+  command: >
+    /usr/local/bin/slapd-password-hash "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
+    "olcDatabase={1}monitor,cn=config" "olcRootPW"
   environment:
-    password: "{{ slapd_monitor_rootdn_password | mandatory }}"
+    bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
+    newpw: "{{ slapd_monitor_rootdn_password | mandatory }}"
   register: hashedMonitorPassword
   changed_when: false
 

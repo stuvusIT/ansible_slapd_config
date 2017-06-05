@@ -1,8 +1,11 @@
 ---
 - name: Hash MDB password
-  command: "/bin/bash -c '/usr/sbin/slappasswd -n -T /dev/stdin < <(echo -n $password)'"
+  command: >
+    /usr/local/bin/slapd-password-hash "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
+    "olcDatabase={2}mdb,cn=config" "olcRootPW"
   environment:
-    password: "{{ slapd_mdb_rootdn_password | mandatory }}"
+    bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
+    newpw: "{{ slapd_mdb_rootdn_password | mandatory }}"
   register: hashedMdbPassword
   changed_when: false
 
