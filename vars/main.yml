@@ -47,7 +47,7 @@ default_frontend_config:
   olcHidden: "FALSE"
   olcLastMod: "TRUE"
   olcAddContentAcl: "TRUE"
-  olcAccess: [ "'to * by * read'" ]
+  olcAccess: [ "to * by * read" ]
   olcSyncUseSubentry: "FALSE"
   olcMirrorMode: "FALSE"
   olcSchemaDN: "cn=Subschema"
@@ -62,7 +62,7 @@ default_olc_config:
   olcRootDN: "{{ slapd_olc_rootdn }}"
   olcRootPW: "{{ hashedOLCPassword.stdout }}"
   olcAddContentAcl: "TRUE"
-  olcAccess: [ "'to * by * none'" ]
+  olcAccess: [ "to * by * none" ]
   olcSyncUseSubentry: "FALSE"
   olcMaxDerefDepth: 15
   olcMonitoring: "FALSE"
@@ -70,7 +70,7 @@ default_olc_config:
 default_monitor_config:
   # General
   olcDatabase: "{1}monitor"
-  olcAccess: [ "'to * by * none'" ]
+  olcAccess: [ "to * by * none" ]
   olcRootDN: "cn=root,cn=monitor"
   olcRootPW: "{{ hashedMonitorPassword.stdout }}"
 # MDB database configuration
@@ -78,7 +78,7 @@ default_mdb_config:
   # General
   olcDatabase: "{2}mdb"
   olcDbDirectory: "{{ slapd_mdb_dir | mandatory }}"
-  olcAccess: [ "'to * by * none'" ]
+  olcAccess: [ "to * by * none" ]
   olcRootDN: "cn=root,{{ slapd_mdb_config.olcSuffix | mandatory }}"
   olcRootPW: "{{ hashedMdbPassword.stdout }}"
   olcDbNoSync: "TRUE"
