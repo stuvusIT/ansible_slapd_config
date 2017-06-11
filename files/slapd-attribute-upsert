@@ -15,7 +15,6 @@ binddn="${2}"
 dn="${3}"
 attribute="${4}"
 shift 4
-[ "${attribute}" = 'dummy' ] && exit 0
 
 # See how it currently looks
 set +e

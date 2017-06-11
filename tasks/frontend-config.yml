@@ -8,7 +8,7 @@
     bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out
   changed_when: "'CHANGED' in out.stdout | default('')"
-  with_dict: "{{ default_frontend_config | combine(frontend_config) }}"
+  with_dict: "{{ default_frontend_config | combine(slapd_frontend_config) }}"
 
 - name: Clean unknown frontend config items
   command: >
