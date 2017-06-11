@@ -2,13 +2,8 @@
 slapd_enable_monitor: true
 slapd_modules_path: /usr/lib/ldap
 # Dummy variables
-slapd_global_config:
-  dummy: value
-slapd_olc_config:
-  dummy: value
-slapd_monitor_config:
-  dummy: value
-slapd_frontend_config:
-  dummy: value
-slapd_mdb_config:
-  dummy: value
+slapd_global_config: {}
+slapd_olc_config: {}
+slapd_monitor_config: {}
+slapd_frontend_config: {}
+slapd_mdb_config: {}

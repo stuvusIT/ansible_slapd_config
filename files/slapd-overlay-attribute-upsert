@@ -17,7 +17,6 @@ overlay="${4}"
 attribute="${5}"
 dn="$(bindpw="${bindpw}" /usr/local/bin/slapd-overlay-dn "${1}" "${2}" "${3}" "${4}")"
 shift 5
-[ "${attribute}" = 'dummy' ] && exit 0
 
 
 # See how it currently looks
