@@ -3,7 +3,7 @@
   command: >
     /usr/local/bin/slapd-attribute-upsert "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
     "cn=config"
-    {{ item.key }} {% if item.value is iterable and item.value is not string %}{{ item.value | join(' ') }}{% else %}"{{ item.value }}"{% endif %}
+    "{{ item.key }}" {% if item.value is iterable and item.value is not string %}"{{ item.value | join('" "') }}"{% else %}"{{ item.value }}"{% endif %}
   environment:
     bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out
@@ -14,7 +14,7 @@
   command: >
     /usr/local/bin/slapd-olc-attribute-clean "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
     "cn=config"
-    {{ default_global_config | combine(slapd_global_config) | join(' ') }} olcAttributeOptions olcConcurrency olcTLSCRLCheck olcTLSVerifyClient olcTLSProtocolMin
+    "{{ default_global_config | combine(slapd_global_config) | join('" "') }}" olcAttributeOptions olcConcurrency olcTLSCRLCheck olcTLSVerifyClient olcTLSProtocolMin
   environment:
     bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out

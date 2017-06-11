@@ -2,7 +2,7 @@
 - name: Copy helper scripts
   copy:
     src: "{{ item }}"
-    dest: /usr/local/bin/{{ item }}
+    dest: "/usr/local/bin/{{ item }}"
     owner: root
     group: root
     mode: 0700
