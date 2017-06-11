@@ -14,7 +14,7 @@
   command: >
     /usr/local/bin/slapd-olc-attribute-clean "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
     "olcDatabase={-1}frontend,cn=config"
-    "{{ default_frontend_config | combine(slapd_frontend_config | join('" "') }}" olcAttributeOptions olcConcurrency olcTLSCRLCheck olcTLSVerifyClient olcTLSProtocolMin
+    "{{ default_frontend_config | combine(slapd_frontend_config) | join('" "') }}" olcAttributeOptions olcConcurrency olcTLSCRLCheck olcTLSVerifyClient olcTLSProtocolMin
   environment:
     bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out
