@@ -3,7 +3,7 @@
   command: >
     /usr/local/bin/slapd-global-modules "{{ slapd_ldapi_socket | urlencode() | regex_replace('/', '%2F') }}" "{{ slapd_olc_rootdn }}"
     "{{ slapd_modules_path }}" "{{ slapd_enable_monitor }}"
-    {% if slapd_additional_modules is not undefined %}{{ slapd_additional_modules | join(' ') }}{% endif %}
+    {% if slapd_additional_modules is not undefined %}"{{ slapd_additional_modules | join('" "') }}"{% endif %}
   environment:
     bindpw: "{{ slapd_olc_rootdn_password | mandatory }}"
   register: out

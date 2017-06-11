@@ -14,8 +14,6 @@ A dpkg- or pacman-based Linux distribution.
 
 ## Role Variables
 
-**All variables must be quoted when they contain spaces!**"
-
 There are some role-global variables:
 
 | Name                            | Default/Required   | Description                                                                     |
