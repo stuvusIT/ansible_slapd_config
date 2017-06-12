@@ -233,7 +233,6 @@ The MDB database also has some more attributes which are only supported on this 
 |--------------------|:------------------------:|---------------------|----------------------------------------------------------------|
 | `olcDbDirectory`   | :heavy_check_mark:       | `{{slapd_mdb_dir}}` | Path to the database directory on disk.                        |
 | `olcDbNoSync`      | :heavy_multiplication_x: | `TRUE`              | Do not sync immediately after data was received.               |
-| `olcDbCheckpoint`  | :heavy_multiplication_x: | `8192 15`           | How often (KB/minutes) to flush the database to disk.          |
 | `olcDbMaxReaders`  | :heavy_multiplication_x: |                     | Maximum number of threads that may access the DB concurrently. |
 | `olcDbMaxSize`     | :heavy_multiplication_x: |                     | Maximum size of DB in bytes.                                   |
 | `olcDbMode`        | :heavy_multiplication_x: | `0600`              | File mode of database files.                                   |
