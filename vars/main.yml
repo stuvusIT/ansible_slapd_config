@@ -82,5 +82,6 @@ default_mdb_config:
   olcRootDN: "cn=root,{{ slapd_mdb_config.olcSuffix | mandatory }}"
   olcRootPW: "{{ hashedMdbPassword.stdout }}"
   olcDbNoSync: "TRUE"
+  olcDbCheckpoint: "8192 15"
   olcDbMode: "0600"
   olcDbSearchStack: 16
