@@ -115,7 +115,7 @@ The global slapd OLC configuration is separated into different sections.
 |-------------------|:----------------:|------------------------------------------------------------------------------------------------|
 | `olcIdleTimeout`  | `0`              | Amount of seconds a client can do nothing before getting disconnected.                         |
 | `olcWriteTimeout` | `0`              | Amount of seconds a client with outstanding writes can do nothing before getting disconnected. |
-| `olcTimeLimit`    | `3600`           | Maximum number of seconds slapd will spend answering a requirest. Allows an `unlimited` value. |
+| `olcTimeLimit`    | `3600`           | Maximum number of seconds slapd will spend answering a request. Allows an `unlimited` value. |
 | `olcSizeLimit`    | `500`            | Maximmum number of entries to return from a search.                                            |
 
 ###### Connections
