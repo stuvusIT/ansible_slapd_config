@@ -7,9 +7,8 @@ default_global_config:
   olcPidFile: "{{ slapd_run_dir | mandatory }}/slapd.pid"
   olcGentleHUP: "FALSE"
   olcServerID: 0
-  # Security-related configuration
+  # Security-related configuration (except olcSecurity; see below)
   olcRequires: "bind"
-  olcSecurity: "ssf=1 simple_bind=128"
   olcAuthzPolicy: "none"
   olcLocalSSF: 300
   olcPasswordHash: "{SSHA}"
@@ -39,6 +38,10 @@ default_global_config:
   # Miscellaneous
   olcReverseLookup: "FALSE"
   olcReadOnly: "FALSE"
+  # olcSecurity needs to come after `olcLocalSSF: 300`. Otherwise, the
+  # simple_bind=128 requirement causes a failure with an error message
+  # of "stronger confidentiality required"
+  olcSecurity: "ssf=1 simple_bind=128"
 # Frontend database configuration
 default_frontend_config:
   # General
